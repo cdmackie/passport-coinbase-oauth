@@ -1,6 +1,6 @@
 {
   "name": "passport-coinbase-oauth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Coinbase  (OAuth) authentication strategies for Passport",
   "keywords": [
     "passport",
@@ -23,7 +23,7 @@
       "url": "http://www.opensource.org/licenses/MIT"
     }
   ],
-  "main": "./lib/passport-coinbase-oauth",
+  "main": "./index",
   "dependencies": {
     "pkginfo": "0.2.x",
     "passport-oauth": "~0.1.4"
