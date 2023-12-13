@@ -22,6 +22,7 @@ util.inherits(Strategy, OAuth2Strategy);
 
 
 Strategy.prototype.userProfile = function(accessToken, done) {
+  this._oauth2.useAuthorizationHeaderforGET(true);
 	this._oauth2.get('https://api.coinbase.com/v2/user', accessToken, function (err, body, res) {
     if (err) { return done(new InternalOAuthError('failed to fetch user profile', err)); }
     
