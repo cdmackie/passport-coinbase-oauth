@@ -5,6 +5,7 @@ var util = require('util')
   , OAuth2Strategy = require('passport-oauth').OAuth2Strategy
   , InternalOAuthError = require('passport-oauth').InternalOAuthError;
 
+var request = require("request");
 
 function Strategy(options, verify) {
   options = options || {};
@@ -21,26 +22,38 @@ function Strategy(options, verify) {
 util.inherits(Strategy, OAuth2Strategy);
 
 
-Strategy.prototype.userProfile = function(accessToken, done) {
-  this._oauth2.useAuthorizationHeaderforGET(true);
-	this._oauth2.get('https://api.coinbase.com/v2/user', accessToken, function (err, body, res) {
+Strategy.prototype.userProfile = function(accessToken, done)
+{
+  request({
+    url: "https://api.coinbase.com/v2/user",
+    method: "GET",
+    json: true,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + accessToken
+    }
+  }, function (err, response, body)
+  {
     if (err) { return done(new InternalOAuthError('failed to fetch user profile', err)); }
     
     try {
-      var json = JSON.parse(body);
+      if (typeof body === "string")
+      {
+        body = JSON.parse(body);
+      }
       
       var profile = { provider: 'coinbase' };
-      profile.id = json.data.id;
-      profile.email = json.data.email;
-      profile.displayName = json.data.name;
-      profile.name = json.data.name;
-      profile.country = json.data.country ? json.data.country.code : null;
-      profile.state = json.data.state;
-      profile.currency = json.data.native_currency;
-      profile.timezone  = json.data.time_zone;
+      profile.id = body.data.id;
+      profile.email = body.data.email;
+      profile.displayName = body.data.name;
+      profile.name = body.data.name;
+      profile.country = body.data.country ? body.data.country.code : null;
+      profile.state = body.data.state;
+      profile.currency = body.data.native_currency;
+      profile.timezone  = body.data.time_zone;
       
       //profile._raw = body;
-      profile._json = json.data;
+      profile._json = body.data;
       
       done(null, profile);
     } catch(e) {
